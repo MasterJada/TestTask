@@ -5,6 +5,7 @@ import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -88,6 +89,8 @@ public class SwipableLayout extends FrameLayout {
                 oldX = v.getX() - event.getRawX();
                 oldY = event.getRawY();
                 startX = v.getX();
+                v.setScaleX(1.1F);
+                v.setScaleY(1.1F);
             }
             if (event.getAction() == MotionEvent.ACTION_MOVE) {
                 float diff = event.getRawX() + oldX;
@@ -96,28 +99,11 @@ public class SwipableLayout extends FrameLayout {
                 }
                 v.setX(diff);
                 v.setRotation(diff / 30);
-                float scaleFactor = Math.max(1 - Math.abs(diff) / v.getWidth(), 0.8F);
+                float scaleFactor = Math.max(1.1F - Math.abs(diff) / v.getWidth(), 0.8F);
                 v.setScaleX(scaleFactor);
                 v.setScaleY(scaleFactor);
+                Log.i("Diff ",diff+"");
 
-                if (Math.abs(diff) > v.getWidth() / 2) {
-                    items.remove((int)v.getTag());
-                    if (diff > 0) {
-                        if (callback != null) {
-                            callback.onSwipedRight(v);
-                        }
-                    } else {
-                        if (callback != null) {
-                            callback.onSwipedLeft(v);
-                        }
-                    }
-                    offset --;
-                    if (offset < 0){
-                        offset = 0;
-                    }
-                    removeView(v);
-                    populateItems();
-                }
             }
             if (event.getAction() == MotionEvent.ACTION_UP) {
                 float diff = event.getRawX() + oldX;
@@ -127,6 +113,8 @@ public class SwipableLayout extends FrameLayout {
                     v.setScaleX(1);
                     v.setScaleY(1);
                     if(callback != null) callback.onCancel(v);
+                }else {
+                    swipeSuccesfull(diff, v);
                 }
             }
 
@@ -138,6 +126,8 @@ public class SwipableLayout extends FrameLayout {
                     v.setScaleX(1);
                     v.setScaleY(1);
                     if(callback != null) callback.onCancel(v);
+                }else {
+                    swipeSuccesfull(diff, v);
                 }
             }
 
@@ -146,6 +136,31 @@ public class SwipableLayout extends FrameLayout {
         }
     };
 
+
+    private void swipeSuccesfull(float diff, View v){
+        if (Math.abs(diff) > v.getWidth() / 2) {
+            if(items.size() > (int)v.getTag()) {
+                items.remove((int) v.getTag());
+            }else {
+                return;
+            }
+            if (diff > 0) {
+                if (callback != null) {
+                    callback.onSwipedRight(v);
+                }
+            } else {
+                if (callback != null) {
+                    callback.onSwipedLeft(v);
+                }
+            }
+            offset --;
+            if (offset < 0){
+                offset = 0;
+            }
+            removeView(v);
+            populateItems();
+        }
+    }
 
     interface SwipeCallback {
         void onMove(float distance, View view);

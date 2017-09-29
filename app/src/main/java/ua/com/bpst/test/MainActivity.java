@@ -58,11 +58,11 @@ public class MainActivity extends AppCompatActivity {
 
             if (distance > 0) {
                 parent.setBackgroundColor(getResources().getColor(R.color.blue));
-                iv_image.setAlpha(1 - (distance / iv_image.getWidth()));
+                view.setAlpha(1 - (distance / iv_image.getWidth()));
             }
             if (distance < 0) {
                 parent.setBackgroundColor(getResources().getColor(R.color.red));
-                iv_image.setAlpha(1 + (distance / iv_image.getWidth()));
+                view.setAlpha(1 + (distance / iv_image.getWidth()));
             }
             tv_total_count.setText("Total count: "+String.valueOf(swipable.getItemsCount()));
         }
@@ -86,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
             ConstraintLayout parent = (ConstraintLayout) view.findViewById(R.id.parent);
             ImageView iv_image = (ImageView) view.findViewById(R.id.iv_image);
             parent.setBackgroundColor(Color.TRANSPARENT);
-            iv_image.setAlpha(1.0F);
+            view.setAlpha(1.0F);
 
         }
     };
